@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Allow: /*.css
+Allow: /*.js
+Allow: /*.pdf
+
+Disallow: /admin/
+Disallow: /private/
+Disallow: /.git/
+Disallow: /node_modules/
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://vivektailor.me/sitemap.xml
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1

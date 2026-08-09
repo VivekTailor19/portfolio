@@ -1,0 +1,74 @@
+{
+  "name": "Vivek Tailor - Flutter Developer & AI Specialist",
+  "short_name": "Vivek Tailor",
+  "description": "Professional portfolio showcasing Flutter development expertise, AI integration, and high-performance mobile applications with 2.5+ years of experience",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e27",
+  "theme_color": "#0f62fe",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230f62fe' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>VT</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230f62fe' width='512' height='512'/><text x='50%' y='50%' font-size='300' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>VT</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect fill='%230a0e27' width='540' height='720'/><rect fill='%230f62fe' y='50' width='540' height='150'/><circle cx='270' cy='125' r='40' fill='%237c3aed'/></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "View Portfolio",
+      "short_name": "Portfolio",
+      "description": "View my professional work and projects",
+      "url": "/#projects",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%230f62fe' width='96' height='96'/><path fill='white' d='M20 30h56v8H20z'/><path fill='white' d='M20 48h56v8H20z'/><path fill='white' d='M20 66h56v8H20z'/></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Contact Me",
+      "short_name": "Contact",
+      "description": "Get in touch with me",
+      "url": "/#contact",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%237c3aed' width='96' height='96'/><path fill='white' d='M20 30h56l-28 20-28-20z'/><rect fill='white' x='20' y='40' width='56' height='36'/></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "View Skills",
+      "short_name": "Skills",
+      "description": "Explore my technical expertise",
+      "url": "/#skills",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect fill='%2306b6d4' width='96' height='96'/><circle cx='24' cy='30' r='8' fill='white'/><circle cx='48' cy='30' r='8' fill='white'/><circle cx='72' cy='30' r='8' fill='white'/><path fill='white' stroke='white' stroke-width='2' d='M24 42L24 68M48 42L48 68M72 42L72 68'/></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+}
