@@ -1,9 +1,9 @@
-name: Deploy GitHub Pages
+name: Deploy GitHub Pages to Production
 
 on:
   push:
     branches:
-      - main
+      - production
   workflow_dispatch:
 
 permissions:
