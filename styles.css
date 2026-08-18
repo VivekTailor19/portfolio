@@ -1128,6 +1128,13 @@ section {
     box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.1);
 }
 
+.form-group input.input-error,
+.form-group textarea.input-error {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
 .form-status {
     padding: var(--spacing-md);
     border-radius: 0.75rem;

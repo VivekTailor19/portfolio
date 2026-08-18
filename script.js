@@ -95,15 +95,25 @@ document.querySelectorAll('section, .experience-card, .experience-item, .skill-c
 });
 
 // ===========================
-// ===========================
 // Form Handling (Google Sheets & Direct Delivery)
 // ===========================
-// Place your Google Apps Script Web App URL here when ready:
-const GOOGLE_SHEET_URL = ''; // e.g., 'https://script.google.com/macros/s/.../exec'
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzT5i83V08X3m5J9eUn2CV5st3KdLmc8iBi6IGc72dcLBKXGBBdZXsXexkYRetzwWC0/exec';
 
 const contactForm = document.getElementById('contactForm');
 const submitBtn = document.getElementById('submitBtn');
 const formStatus = document.getElementById('formStatus');
+
+// Remove error highlight when user starts typing
+if (contactForm) {
+    contactForm.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', () => {
+            input.classList.remove('input-error');
+            if (formStatus && formStatus.classList.contains('error')) {
+                setFormStatus('', '');
+            }
+        });
+    });
+}
 
 if (contactForm && submitBtn) {
     contactForm.addEventListener('submit', async (e) => {
@@ -127,23 +137,105 @@ if (contactForm && submitBtn) {
             return;
         }
 
-        // 3. Extract & Validate Form Inputs
-        const name = (contactForm.querySelector('#name')?.value || '').trim();
-        const email = (contactForm.querySelector('#email')?.value || '').trim();
-        const subject = (contactForm.querySelector('#subject')?.value || 'Portfolio Inquiry').trim();
-        const message = (contactForm.querySelector('#message')?.value || '').trim();
+        // 3. Extract Form Inputs
+        const nameInput = contactForm.querySelector('#name');
+        const emailInput = contactForm.querySelector('#email');
+        const subjectInput = contactForm.querySelector('#subject');
+        const messageInput = contactForm.querySelector('#message');
 
-        if (!name || !email || !message) {
-            setFormStatus('Please complete all required fields.', 'error');
+        const rawName = (nameInput?.value || '').trim();
+        const rawEmail = (emailInput?.value || '').trim();
+        const rawSubject = (subjectInput?.value || '').trim();
+        const rawMessage = (messageInput?.value || '').trim();
+
+        // Reset previous field errors
+        [nameInput, emailInput, subjectInput, messageInput].forEach(el => el?.classList.remove('input-error'));
+
+        // 4. Strict Validation Checks
+        // --- Name validation (2 to 80 characters, must have letters) ---
+        if (!rawName || rawName.length < 2) {
+            nameInput?.classList.add('input-error');
+            nameInput?.focus();
+            setFormStatus('Please enter your full name (minimum 2 characters).', 'error');
+            return;
+        }
+        if (rawName.length > 80) {
+            nameInput?.classList.add('input-error');
+            nameInput?.focus();
+            setFormStatus('Name is too long (maximum 80 characters).', 'error');
+            return;
+        }
+        if (!/[a-zA-Z\u00C0-\u024F]/.test(rawName)) {
+            nameInput?.classList.add('input-error');
+            nameInput?.focus();
+            setFormStatus('Please enter a valid name containing letters.', 'error');
             return;
         }
 
-        if (!isValidEmail(email)) {
-            setFormStatus('Please enter a valid email address.', 'error');
+        // --- Email validation ---
+        if (!rawEmail) {
+            emailInput?.classList.add('input-error');
+            emailInput?.focus();
+            setFormStatus('Please enter your email address.', 'error');
+            return;
+        }
+        if (!isValidEmail(rawEmail)) {
+            emailInput?.classList.add('input-error');
+            emailInput?.focus();
+            setFormStatus('Please enter a valid email address (e.g. yourname@domain.com).', 'error');
+            return;
+        }
+        if (rawEmail.length > 100) {
+            emailInput?.classList.add('input-error');
+            emailInput?.focus();
+            setFormStatus('Email is too long (maximum 100 characters).', 'error');
             return;
         }
 
-        // 4. Update Button State to Loading
+        // --- Subject validation (3 to 150 characters) ---
+        if (!rawSubject || rawSubject.length < 3) {
+            subjectInput?.classList.add('input-error');
+            subjectInput?.focus();
+            setFormStatus('Please enter a subject (minimum 3 characters).', 'error');
+            return;
+        }
+        if (rawSubject.length > 150) {
+            subjectInput?.classList.add('input-error');
+            subjectInput?.focus();
+            setFormStatus('Subject is too long (maximum 150 characters).', 'error');
+            return;
+        }
+
+        // --- Message validation (10 to 2500 characters) ---
+        if (!rawMessage || rawMessage.length < 10) {
+            messageInput?.classList.add('input-error');
+            messageInput?.focus();
+            setFormStatus('Please enter a detailed message (minimum 10 characters).', 'error');
+            return;
+        }
+        if (rawMessage.length > 2500) {
+            messageInput?.classList.add('input-error');
+            messageInput?.focus();
+            setFormStatus('Message exceeds maximum limit of 2,500 characters.', 'error');
+            return;
+        }
+
+        // --- Anti-Spam Link Threshold (reject submissions with > 3 URLs) ---
+        const urlMatches = rawMessage.match(/https?:\/\/[^\s]+/gi) || [];
+        if (urlMatches.length > 3) {
+            messageInput?.classList.add('input-error');
+            messageInput?.focus();
+            setFormStatus('For security reasons, messages cannot contain more than 3 links.', 'error');
+            return;
+        }
+
+        // 5. Sanitize Strings for Safe Transport
+        const name = sanitizeText(rawName);
+        const email = sanitizeText(rawEmail);
+        const subject = sanitizeText(rawSubject);
+        const message = sanitizeText(rawMessage);
+
+        // 6. Update Button State to Loading
         const btnText = submitBtn.querySelector('.btn-text') || submitBtn;
         const originalText = btnText.textContent;
         submitBtn.disabled = true;
@@ -153,20 +245,21 @@ if (contactForm && submitBtn) {
 
         try {
             if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.trim() !== '') {
-                // Send to Google Sheets Web App
+                // Send to Google Sheets Web App as JSON string
                 const payload = {
                     name,
                     email,
                     subject,
                     message,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent ? navigator.userAgent.slice(0, 150) : 'Browser'
                 };
 
                 await fetch(GOOGLE_SHEET_URL, {
                     method: 'POST',
                     mode: 'no-cors', // Google Apps Script requires no-cors for client-side redirection
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'text/plain;charset=utf-8'
                     },
                     body: JSON.stringify(payload)
                 });
@@ -178,7 +271,7 @@ if (contactForm && submitBtn) {
                 submitBtn.classList.remove('is-loading');
                 submitBtn.classList.add('is-success');
                 btnText.textContent = '✓ Message Sent!';
-                setFormStatus('Thank you! Your message has been recorded. I will get back to you shortly.', 'success');
+                setFormStatus('Thank you! Your message has been sent successfully. I will get back to you shortly.', 'success');
                 showNotification('Message sent successfully!', 'success');
                 contactForm.reset();
 
@@ -228,11 +321,19 @@ function setFormStatus(text, type) {
 }
 
 // ===========================
-// Utility Functions
+// Utility & Security Functions
 // ===========================
+function sanitizeText(str) {
+    if (!str) return '';
+    return str
+        .replace(/[<>]/g, '') // Strip potential HTML tags
+        .trim();
+}
+
 function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    if (!email || typeof email !== 'string') return false;
+    const re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+    return re.test(email.trim());
 }
 
 function showNotification(message, type = 'info') {
