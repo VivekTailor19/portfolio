@@ -88,8 +88,8 @@ const observer = new IntersectionObserver(function (entries) {
     });
 }, observerOptions);
 
-// Observe all sections
-document.querySelectorAll('section, .experience-card, .skill-category, .project-card').forEach(el => {
+// Observe all sections and cards
+document.querySelectorAll('section, .experience-card, .experience-item, .skill-category, .project-card, .project-card-mini').forEach(el => {
     el.classList.add('observe');
     observer.observe(el);
 });

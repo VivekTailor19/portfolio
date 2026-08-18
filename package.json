@@ -1,0 +1,13 @@
+{
+  "name": "vivek-tailor-portfolio",
+  "version": "1.0.0",
+  "description": "Professional portfolio website for Vivek Tailor",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["portfolio", "flutter", "developer"],
+  "author": "Vivek Tailor",
+  "license": "ISC"
+}

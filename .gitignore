@@ -1,0 +1,67 @@
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.sublime-project
+.sublime-workspace
+*.sublime-project
+*.sublime-workspace
+.atom/
+.emacs.desktop
+*~
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build Output
+dist/
+build/
+out/
+.nuxt/
+.cache/
+.parcel-cache
+.next/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary
+temp/
+tmp/
+*.tmp
+
+# Backup Files
+*.bak
+*.backup
+*.old
+
+# OS
+.Thumbs.db
+.AppleDesktop
+
+# Project Specific
+.DS_Store
+*.pem
+private/
+secrets/
