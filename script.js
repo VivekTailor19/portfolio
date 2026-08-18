@@ -95,59 +95,136 @@ document.querySelectorAll('section, .experience-card, .experience-item, .skill-c
 });
 
 // ===========================
-// Form Handling
 // ===========================
-const contactForm = document.getElementById('contactForm');
+// Form Handling (Google Sheets & Direct Delivery)
+// ===========================
+// Place your Google Apps Script Web App URL here when ready:
+const GOOGLE_SHEET_URL = ''; // e.g., 'https://script.google.com/macros/s/.../exec'
 
-if (contactForm) {
+const contactForm = document.getElementById('contactForm');
+const submitBtn = document.getElementById('submitBtn');
+const formStatus = document.getElementById('formStatus');
+
+if (contactForm && submitBtn) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Get form data
-        const formData = new FormData(contactForm);
-        const name = contactForm.querySelector('input[type="text"]').value.trim();
-        const email = contactForm.querySelector('input[type="email"]').value.trim();
-        const message = contactForm.querySelector('textarea').value.trim();
+        // 1. Anti-Spam Honeypot Verification (Silently reject bots)
+        const botcheck = document.getElementById('botcheck');
+        if (botcheck && botcheck.value.trim() !== '') {
+            console.warn('Bot detected via honeypot.');
+            showNotification('Message sent successfully!', 'success');
+            contactForm.reset();
+            return;
+        }
 
-        // Simple validation
+        // 2. Client-Side Cooldown / Rate-Limiting (60-second timer)
+        const lastSent = sessionStorage.getItem('last_form_sent');
+        const now = Date.now();
+        if (lastSent && (now - parseInt(lastSent, 10)) < 60000) {
+            const remaining = Math.ceil((60000 - (now - parseInt(lastSent, 10))) / 1000);
+            setFormStatus(`Please wait ${remaining}s before sending another message.`, 'error');
+            return;
+        }
+
+        // 3. Extract & Validate Form Inputs
+        const name = (contactForm.querySelector('#name')?.value || '').trim();
+        const email = (contactForm.querySelector('#email')?.value || '').trim();
+        const subject = (contactForm.querySelector('#subject')?.value || 'Portfolio Inquiry').trim();
+        const message = (contactForm.querySelector('#message')?.value || '').trim();
+
         if (!name || !email || !message) {
-            showNotification('Please fill in all fields', 'error');
+            setFormStatus('Please complete all required fields.', 'error');
             return;
         }
 
         if (!isValidEmail(email)) {
-            showNotification('Please enter a valid email address', 'error');
+            setFormStatus('Please enter a valid email address.', 'error');
             return;
         }
 
-        // Here you would typically send the data to a backend service
-        // For now, we'll show a success message
-        console.log('Form submitted:', { name, email, message });
-        
-        showNotification('Thank you for reaching out! I\'ll get back to you soon.', 'success');
-        contactForm.reset();
+        // 4. Update Button State to Loading
+        const btnText = submitBtn.querySelector('.btn-text') || submitBtn;
+        const originalText = btnText.textContent;
+        submitBtn.disabled = true;
+        submitBtn.classList.add('is-loading');
+        btnText.textContent = 'Sending Message...';
+        setFormStatus('', '');
 
-        // Optional: You can uncomment the below to send data to a service like Formspree
-        /*
         try {
-            const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-                method: 'POST',
-                body: JSON.stringify({ name, email, message }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            
-            if (response.ok) {
+            if (GOOGLE_SHEET_URL && GOOGLE_SHEET_URL.trim() !== '') {
+                // Send to Google Sheets Web App
+                const payload = {
+                    name,
+                    email,
+                    subject,
+                    message,
+                    timestamp: new Date().toISOString()
+                };
+
+                await fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Google Apps Script requires no-cors for client-side redirection
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // Record cooldown timestamp
+                sessionStorage.setItem('last_form_sent', Date.now().toString());
+
+                // Success UI
+                submitBtn.classList.remove('is-loading');
+                submitBtn.classList.add('is-success');
+                btnText.textContent = '✓ Message Sent!';
+                setFormStatus('Thank you! Your message has been recorded. I will get back to you shortly.', 'success');
                 showNotification('Message sent successfully!', 'success');
                 contactForm.reset();
+
+                setTimeout(() => {
+                    submitBtn.classList.remove('is-success');
+                    btnText.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 4000);
             } else {
-                showNotification('Failed to send message. Please try again.', 'error');
+                // Fallback: If Google Sheets URL is not yet added, pre-fill email client directly
+                const mailtoUrl = `mailto:vivektailor012@gmail.com?subject=${encodeURIComponent('[Portfolio] ' + subject)}&body=${encodeURIComponent('From: ' + name + ' (' + email + ')\n\n' + message)}`;
+                window.location.href = mailtoUrl;
+
+                submitBtn.classList.remove('is-loading');
+                btnText.textContent = '✓ Opened in Email';
+                setFormStatus('Opening your email client to send message to vivektailor012@gmail.com...', 'success');
+                showNotification('Opening email client...', 'info');
+                contactForm.reset();
+
+                setTimeout(() => {
+                    btnText.textContent = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
             }
         } catch (error) {
-            showNotification('An error occurred. Please try again later.', 'error');
-            console.error('Error:', error);
+            console.error('Form submission error:', error);
+            submitBtn.classList.remove('is-loading');
+            btnText.textContent = originalText;
+            submitBtn.disabled = false;
+            setFormStatus('Failed to send. Please reach out directly to vivektailor012@gmail.com', 'error');
+            showNotification('Failed to send message. Please email directly.', 'error');
         }
-        */
     });
+}
+
+function setFormStatus(text, type) {
+    if (!formStatus) return;
+    if (!text) {
+        formStatus.style.display = 'none';
+        formStatus.textContent = '';
+        formStatus.className = 'form-status';
+        return;
+    }
+    formStatus.textContent = text;
+    formStatus.className = `form-status ${type}`;
+    formStatus.style.display = 'block';
 }
 
 // ===========================

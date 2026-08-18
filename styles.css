@@ -1128,6 +1128,39 @@ section {
     box-shadow: 0 0 0 3px rgba(15, 98, 254, 0.1);
 }
 
+.form-status {
+    padding: var(--spacing-md);
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+}
+
+.form-status.success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+
+.form-status.error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+
+.btn.is-loading {
+    opacity: 0.8;
+    pointer-events: none;
+    cursor: wait;
+}
+
+.btn.is-success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
 /* ===========================
    Footer
    =========================== */
