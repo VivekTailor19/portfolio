@@ -16,52 +16,49 @@ desktop.ini
 *.swn
 .sublime-project
 .sublime-workspace
-*.sublime-project
-*.sublime-workspace
 .atom/
 .emacs.desktop
 *~
 *.log
 
-# Environment
+# Secrets, Credentials & Tokens
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+*.pem
+*.key
+*.pub
+*.token
+*.secret
+*.credentials
+secrets/
+private/
+*secret*
+*credential*
+*_GUIDE.md
+*GUIDE*.md
+QUICK_START*.md
+DEPLOYMENT*.md
 
 # Dependencies
 node_modules/
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
 
 # Build Output
 dist/
 build/
 out/
-.nuxt/
 .cache/
 .parcel-cache
-.next/
 
-# Testing
+# Testing & Temporary
 coverage/
 .nyc_output/
-
-# Temporary
 temp/
 tmp/
 *.tmp
-
-# Backup Files
 *.bak
 *.backup
 *.old
-
-# OS
-.Thumbs.db
-.AppleDesktop
-
-# Project Specific
-.DS_Store
-*.pem
-private/
-secrets/
